@@ -23,3 +23,14 @@ Note - [0] is a null byte
 4 - ping : Pingee will respond to pinger with another '4' packet
 #####Format
 	4[0][padding to 100 bytes]
+	
+## Database name
+
+BLABdb
+
+## BLABdb Tables
+
+foodItemLookup:
+	tag_hashcode varchar(64) primary_key
+	item_name varchar(40)
+	expiry int
