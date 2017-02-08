@@ -31,6 +31,7 @@ BLABdb
 ## BLABdb Tables
 
 foodItemLookup:
+####
 	tag_hashcode varchar(64) primary_key
 	item_name varchar(40)
 	expiry int
