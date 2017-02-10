@@ -26,9 +26,9 @@ Note - [0] is a null byte
 	
 ## Database name
 
-BLABdb
+BLAB_db
 
-## BLABdb Tables
+## BLAB_db Tables
 ####food_item_lookup:
 
 	tag_hashcode varchar(64) primary_key
