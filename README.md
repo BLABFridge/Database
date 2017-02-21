@@ -1,7 +1,7 @@
 # Database
 
 ## Opcodes for interfacing with database
-Note - [0] is a null byte
+Note - [0] is the delimeter used between items in packets. Currently, '_'(underscore) is being used for testing
 
 
 0 - Request FoodItem : Request a returned foodItem from the database
