@@ -1,14 +1,23 @@
 # Source: https://pymotw.com/2/socket/udp.html
 
 import socket, sys, time, thread
-CONST_DELIM = '_'
+CONST_DELIM = '?'
 CONST_PORT = 4001
 CONST_SENDERPORT = 4002 #different for testing
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+except socket.error:
+    print("Could not open socket")
+
 server_address = ('localhost', CONST_PORT)
-s.bind(server_address)
+
+try:
+    s.bind(server_address)
+except socket.error:
+    print("Could not bind socket")
+s.settimeout(20)
 
 #takes a string and creates a substring from index x1 to x2
 def substring(str,x1,x2):
@@ -65,13 +74,17 @@ def getData3(data):
 
 
 
-def pingBack(errorCode, serverIP , port):
-    send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def sendResponse(errorCode, serverIP , port):
+    #if errorCode == 0:
+
     data = [100]
     data[0] = errorCode
     sendData = ''.join(data)
     server_address = (serverIP, port)
-    send.sendto(sendData, server_address)
+    try:
+        s.sendto(sendData, server_address)
+    except socket.error:
+        print("Failed sending")
     
     return;
 
@@ -83,7 +96,6 @@ def getFoodItem(hashcode):
 def isInDatabase(hashcode):
     return
 
-
 #Main loop, print statements for testing.
 #assumes that all datapackets are sent with no error
 #TODO---- Add multithreading for sending so that the listener can remain open
@@ -93,28 +105,65 @@ def isInDatabase(hashcode):
 while True:
 
     print ("Waiting to receive on port %d : press Ctrl-C or Ctrl-Break to stop " % CONST_PORT)
+    #set to receive 100 bytes
 
-    data, address = s.recvfrom(100)
+    try:
+        (data, address) = s.recvfrom(100)
+    except socket.timeout:
+        print("Socket timed out")
+    
+    
+    senderIP, senderSocket = address;
 
     if len(data) > 0:
         if data[0] == '0':
             print("Return food item from database with hashcode")
-            print("%s" % getData1(data))
-        elif data[0] == '1':
-            print("Food item returned to the fridge")
-            print("%s" % getData1(data))
-            print("%s" % getData2(data))
-        elif data[0] == '2':
-            print("food item is not in the database")
-            pingBack('2', 'localhost', CONST_SENDERPORT)
+            #hashcode = getData1(data)
+            #if the data has the opcode 0, the system is required to look up the foodItem in the database, package that item and send it to back to the caller. can reuse s.
+            server_address = (senderIP, CONST_SENDERPORT)
+            
+            #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
+            #if(db.hasFoodItem(hashcode)):
+                #get FoodItem name and lifetime from database, using dummy values for now...
+                #name = db.getFoodItem(hashcode).getName
+                #lifetime = db.getLifetime(hashcode).getLifetime
+            name = 'apple' #-------DELETE this line when the database grabs the name.
+            lifetime = '15' #-------DELETE this line when the database grabs the lifetime.
+
+                #combine the data to send back to the controller.
+            newData = '1'
+            newData += CONST_DELIM
+            newData += name
+            newData += CONST_DELIM
+            newData += lifetime
+            newData += CONST_DELIM
+            sendData = bytearray(newData)
+            
+                #send the data back to the controller.
+
+            try:
+                s.sendto(sendData, server_address)
+            except socket.error:
+                print("Failed sending")
+                        
+            
+            print("Food item found and sent to controller")
+        
+            #else:
+            sendResponse('2', senderIP, CONST_SENDERPORT)
+            print("Food item is not in the database, notifying controller")
+
         elif data[0] == '3':
             print("Update the database with the new item")
-            print("%s" % getData1(data))
-            print("%s" % getData2(data))
-            print("%s" % getData3(data))
+            #name = getData1(data)
+            #lifetime = getData2(data)
+            #hashcode = getData3(data)
+            #db.add(name, lifetime, hashcode)
         elif data[0] == '4':
             print("ping back to the sender")
-            pingBack('4', 'localhost', CONST_SENDERPORT)
+            sendResponse('4', senderIP, CONST_SENDERPORT)
+        else:
+            print("Improper format")
     if not len(data):
         break
     print ("Received %s bytes from %s %s: " % (len(data), address, data ))
