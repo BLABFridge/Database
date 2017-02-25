@@ -1,4 +1,4 @@
-# Source: https://pymotw.com/2/socket/udp.html
+
 
 import socket, sys, time, thread
 CONST_DELIM = '?'
