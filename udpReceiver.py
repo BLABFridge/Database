@@ -1,6 +1,5 @@
-
-
 import socket, sys, time, thread
+from sql_connector import *
 CONST_DELIM = '?'
 CONST_PORT = 4001
 CONST_SENDERPORT = 4002 #different for testing
@@ -18,6 +17,8 @@ try:
 except socket.error:
     print("Could not bind socket")
 s.settimeout(20)
+
+handler = db_hand();
 
 #takes a string and creates a substring from index x1 to x2
 def substring(str,x1,x2):
@@ -90,11 +91,19 @@ def sendResponse(errorCode, serverIP , port):
 
 #TODO-----
 def addToDataBase():
-    return
+	
+	return
 def getFoodItem(hashcode):
-    return
+	row = handler.get_item(hashcode)
+	return row[0]
+
+def getExpiration(hashcode):
+	row = handler.get_item(hashcode)
+	return row[1]
+	
 def isInDatabase(hashcode):
-    return
+	row = handler.get_item(hashcode)
+	return row is None
 
 #Main loop, print statements for testing.
 #assumes that all datapackets are sent with no error
