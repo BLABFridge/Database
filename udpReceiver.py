@@ -89,10 +89,6 @@ def sendResponse(errorCode, serverIP , port):
     return;
 
 #Main loop, print statements for testing.
-#assumes that all datapackets are sent with no error
-#TODO---- Add multithreading for sending so that the listener can remain open
-#         Add appropriate waiting periods/timeouts
-#         Integrate with database
 
 while True:
 
@@ -106,8 +102,7 @@ while True:
     if len(data) > 0:
         if data[0] == '0':
             print("Return food item from database with hashcode")
-            #hashcode = getData1(data)
-            #if the data has the opcode 0, the system is required to look up the foodItem in the database, package that item and send it to back to the caller. can reuse s.
+            hashcode = getData1(data)
             server_address = (senderIP, CONST_SENDERPORT)
             
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
