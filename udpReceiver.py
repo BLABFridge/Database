@@ -10,13 +10,12 @@ try:
 except socket.error:
     print("Could not open socket")
 
-server_address = ('localhost', CONST_PORT)
+server_address = ("", CONST_PORT)
 
 try:
     s.bind(server_address)
 except socket.error:
     print("Could not bind socket")
-s.settimeout(20)
 
 handler = db_hand();
 
@@ -89,18 +88,6 @@ def sendResponse(errorCode, serverIP , port):
     
     return;
 
-def getFoodItem(hashcode):
-	row = handler.get_item(hashcode)
-	return row[0]
-
-def getExpiration(hashcode):
-	row = handler.get_item(hashcode)
-	return row[1]
-	
-def isInDatabase(hashcode):
-	row = handler.get_item(hashcode)
-	return row is None
-
 #Main loop, print statements for testing.
 #assumes that all datapackets are sent with no error
 #TODO---- Add multithreading for sending so that the listener can remain open
@@ -111,14 +98,10 @@ while True:
 
     print ("Waiting to receive on port %d : press Ctrl-C or Ctrl-Break to stop " % CONST_PORT)
     #set to receive 100 bytes
-
-    try:
-        (data, address) = s.recvfrom(100)
-    except socket.timeout:
-        print("Socket timed out")
+	
+    (data, address) = s.recvfrom(100)    
     
-    
-    senderIP, senderSocket = address;
+    senderIP, senderSocket = address
 
     if len(data) > 0:
         if data[0] == '0':
@@ -128,10 +111,11 @@ while True:
             server_address = (senderIP, CONST_SENDERPORT)
             
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
-            if(handler.isInDatabase(hashcode)):
+            if(handler.get_item(hashcode) is not None):
                 #get FoodItem name and lifetime from database, using dummy values for now...
-                name = handler.getFoodItem(hashcode)
-                lifetime = handler.getExpiration(hashcode)
+		row = handler.get_item(hashcode)
+                name = row[0]
+                lifetime = row[1]
 
                 #combine the data to send back to the controller.
             	newData = '1'
