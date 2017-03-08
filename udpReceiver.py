@@ -123,17 +123,16 @@ while True:
             
                 #send the data back to the controller.
 
-            try:
-                s.sendto(sendData, server_address)
-            except socket.error:
-                print("Failed sending")
+            	try:
+                	s.sendto(sendData, server_address)
+            	except socket.error:
+                	print("Failed sending")
                         
-            
-            print("Food item found and sent to controller")
+            	print("Food item found and sent to controller")
         
-            #else:
-            sendResponse('2', senderIP, CONST_SENDERPORT)
-            print("Food item is not in the database, notifying controller")
+            else:
+            	sendResponse('2', senderIP, CONST_SENDERPORT)
+            	print("Food item is not in the database, notifying controller")
 
         elif data[0] == '3':
             print("Update the database with the new item")
