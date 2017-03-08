@@ -89,10 +89,6 @@ def sendResponse(errorCode, serverIP , port):
     
     return;
 
-#TODO-----
-def addToDataBase():
-	
-	return
 def getFoodItem(hashcode):
 	row = handler.get_item(hashcode)
 	return row[0]
@@ -132,21 +128,19 @@ while True:
             server_address = (senderIP, CONST_SENDERPORT)
             
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
-            #if(db.hasFoodItem(hashcode)):
+            if(handler.isInDatabase(hashcode)):
                 #get FoodItem name and lifetime from database, using dummy values for now...
-                #name = db.getFoodItem(hashcode).getName
-                #lifetime = db.getLifetime(hashcode).getLifetime
-            name = 'apple' #-------DELETE this line when the database grabs the name.
-            lifetime = '15' #-------DELETE this line when the database grabs the lifetime.
+                name = handler.getFoodItem(hashcode)
+                lifetime = handler.getExpiration(hashcode)
 
                 #combine the data to send back to the controller.
-            newData = '1'
-            newData += CONST_DELIM
-            newData += name
-            newData += CONST_DELIM
-            newData += lifetime
-            newData += CONST_DELIM
-            sendData = bytearray(newData)
+            	newData = '1'
+            	newData += CONST_DELIM
+            	newData += name
+            	newData += CONST_DELIM
+            	newData += lifetime
+            	newData += CONST_DELIM
+            	sendData = bytearray(newData)
             
                 #send the data back to the controller.
 
@@ -164,10 +158,10 @@ while True:
 
         elif data[0] == '3':
             print("Update the database with the new item")
-            #name = getData1(data)
-            #lifetime = getData2(data)
-            #hashcode = getData3(data)
-            #db.add(name, lifetime, hashcode)
+            name = getData1(data)
+            lifetime = getData2(data)
+            hashcode = getData3(data)
+            handler.put_item(hashcode, name, lifetime)
         elif data[0] == '4':
             print("ping back to the sender")
             sendResponse('4', senderIP, CONST_SENDERPORT)
