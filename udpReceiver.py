@@ -142,7 +142,7 @@ while True:
             handler.put_item(hashcode, name, lifetime)
         elif data[0] == '4':
             print("ping back to the sender")
-            sendResponse('4', senderIP, CONST_SENDERPORT)
+            sendResponse('4', senderIP, senderSocket)
         else:
             print("Improper format")
     if not len(data):
