@@ -104,11 +104,11 @@ while True:
             print("Return food item from database with hashcode")
             hashcode = getData1(data)
             server_address = (senderIP, CONST_SENDERPORT)
-            
+            row = handler.get_item(hashcode)
+		
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
-            if(handler.get_item(hashcode) is not None):
+            if(row is not None):
                 #get FoodItem name and lifetime from database, using dummy values for now...
-		row = handler.get_item(hashcode)
                 name = row[0]
                 lifetime = row[1]
 
