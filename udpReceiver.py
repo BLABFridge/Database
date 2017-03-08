@@ -131,7 +131,7 @@ while True:
             	print("Food item found and sent to controller")
         
             else:
-            	sendResponse('2', senderIP, CONST_SENDERPORT)
+            	sendResponse('2', senderIP, senderSocket)
             	print("Food item is not in the database, notifying controller")
 
         elif data[0] == '3':
