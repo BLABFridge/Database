@@ -103,7 +103,7 @@ while True:
         if data[0] == '0':
             print("Return food item from database with hashcode")
             hashcode = getData1(data)
-            server_address = (senderIP, CONST_SENDERPORT)
+            server_address = (senderIP, senderSocket)
             row = handler.get_item(hashcode)
 		
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
