@@ -35,6 +35,6 @@ class db_hand:
 
 def main():
 	hand = db_hand()
-	print(hand.get_item('ajk19a20'))
+	print(hand.get_item('1234567890'))
 
 main()
