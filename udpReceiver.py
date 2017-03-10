@@ -117,7 +117,7 @@ while True:
             	newData += CONST_DELIM
             	newData += name
             	newData += CONST_DELIM
-            	newData += lifetime
+            	newData += str(lifetime)
             	newData += CONST_DELIM
             	sendData = bytearray(newData)
             
