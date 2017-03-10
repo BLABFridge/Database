@@ -27,51 +27,9 @@ def substring(str,x1,x2):
     return ''.join(sub)
 
 #Simple functions dealing with data extraction from the packets.
-def getData1(data):
-    for i in range (0, len(data)):
-        if data[i] == CONST_DELIM:
-            x = i
-            break
-
-    for y in range(x+1, len(data)):
-        if data[y] == CONST_DELIM:
-            q = y
-            break
-    s = substring(data, x+1, q)
-    return s
-
-def getData2(data):
-    count  = 0
-    for i in range (0, len(data)):
-        if data[i] == CONST_DELIM:
-            x = i
-            count+=1
-        if count == 2:
-            break
-    
-    for y in range(x+1, len(data)):
-        if data[y] == CONST_DELIM:
-            q = y
-            break
-    s = substring(data, x+1, q)
-    return s
-
-def getData3(data):
-    count  = 0
-    for i in range (0, len(data)):
-        if data[i] == CONST_DELIM:
-            x = i
-            count+=1
-        if count == 3:
-            break
-    
-    for y in range(x+1, len(data)):
-        if data[y] == CONST_DELIM:
-            q = y
-            break
-    s = substring(data, x+1, q)
-    return s
-
+def getData(data, index):
+     x=data.split('?', 10)
+     return x[index]
 
 
 def sendResponse(errorCode, serverIP , port):
@@ -89,10 +47,6 @@ def sendResponse(errorCode, serverIP , port):
     return;
 
 #Main loop, print statements for testing.
-#assumes that all datapackets are sent with no error
-#TODO---- Add multithreading for sending so that the listener can remain open
-#         Add appropriate waiting periods/timeouts
-#         Integrate with database
 
 while True:
 
@@ -105,15 +59,13 @@ while True:
 
     if len(data) > 0:
         if data[0] == '0':
-            print("Return food item from database with hashcode")
-            #hashcode = getData1(data)
-            #if the data has the opcode 0, the system is required to look up the foodItem in the database, package that item and send it to back to the caller. can reuse s.
-            server_address = (senderIP, CONST_SENDERPORT)
-            
+            hashcode = getData(data, 1)
+            server_address = (senderIP, senderSocket)
+            row = handler.get_item(hashcode)
+		
             #INDENT EVERYTHING IN THE IF/ELSE ONCE DATABASE FUNCTIONS ARE ADDED B/C PYTHON IS STUPID
-            if(handler.get_item(hashcode) is not None):
+            if(row is not None):
                 #get FoodItem name and lifetime from database, using dummy values for now...
-		row = handler.get_item(hashcode)
                 name = row[0]
                 lifetime = row[1]
 
@@ -122,33 +74,32 @@ while True:
             	newData += CONST_DELIM
             	newData += name
             	newData += CONST_DELIM
-            	newData += lifetime
+            	newData += str(lifetime)
             	newData += CONST_DELIM
             	sendData = bytearray(newData)
             
                 #send the data back to the controller.
 
-            try:
-                s.sendto(sendData, server_address)
-            except socket.error:
-                print("Failed sending")
+            	try:
+                	s.sendto(sendData, server_address)
+            	except socket.error:
+                	print("Failed sending")
                         
-            
-            print("Food item found and sent to controller")
+            	print("Food item found and sent to controller")
         
-            #else:
-            sendResponse('2', senderIP, CONST_SENDERPORT)
-            print("Food item is not in the database, notifying controller")
+            else:
+            	sendResponse('2', senderIP, senderSocket)
+            	print("Food item is not in the database, notifying controller")
 
         elif data[0] == '3':
             print("Update the database with the new item")
-            name = getData1(data)
-            lifetime = getData2(data)
-            hashcode = getData3(data)
+            name = getData(data,1)
+            lifetime = getData(data,2)
+            hashcode = getData(data,3)
             handler.put_item(hashcode, name, lifetime)
         elif data[0] == '4':
             print("ping back to the sender")
-            sendResponse('4', senderIP, CONST_SENDERPORT)
+            sendResponse('4', senderIP, senderSocket)
         else:
             print("Improper format")
     if not len(data):

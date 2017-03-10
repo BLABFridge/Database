@@ -33,8 +33,7 @@ class db_hand:
 		return True
 
 
-def main():
-	hand = db_hand()
-	print(hand.get_item('ajk19a20'))
+#def main():
+#	hand = db_hand()
 
-main()
+#main()
