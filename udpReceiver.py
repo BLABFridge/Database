@@ -3,6 +3,7 @@ from sql_connector import *
 CONST_DELIM = '?'
 CONST_PORT = 4001
 CONST_SENDERPORT = 4002 #different for testing
+CONST_HASHCODE_LENGTH = 10;
 
 
 try:
@@ -18,6 +19,26 @@ except socket.error:
     print("Could not bind socket")
 
 handler = db_hand();
+
+#takes a string and returns the string equivalent of the hashcode.
+def getHash(data, index):
+    sub = []
+    count = 0
+    hashIndex = 0
+    if(index == 1):
+        for i in range(2,CONST_HASHCODE_LENGTH+2):
+            sub+=data[i]
+        return ''.join(sub)
+    elif(index == 3):
+        for z in range(0,len(data)):
+            if(data[z] == '?'):
+                count+=1
+            if(count == 3):
+                hashIndex = z
+                break
+        for i in range(z+1,CONST_HASHCODE_LENGTH+z+1):
+            sub+=data[i]
+        return ''.join(sub)
 
 #takes a string and creates a substring from index x1 to x2
 def substring(str,x1,x2):
@@ -59,7 +80,7 @@ while True:
 
     if len(data) > 0:
         if data[0] == '0':
-            hashcode = getData(data, 1)
+            hashcode = getHash(data, 1)
             server_address = (senderIP, senderSocket)
             row = handler.get_item(hashcode)
 		
@@ -95,7 +116,7 @@ while True:
             print("Update the database with the new item")
             name = getData(data,1)
             lifetime = getData(data,2)
-            hashcode = getData(data,3)
+            hashcode = getHash(data,3)
             handler.put_item(hashcode, name, lifetime)
         elif data[0] == '4':
             print("ping back to the sender")
