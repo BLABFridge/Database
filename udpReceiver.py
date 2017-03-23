@@ -31,9 +31,9 @@ def getHash(data, index):
         return ''.join(sub)
     elif(index == 3):
         for z in range(0,len(data)):
-            if(data[z] == '?'):
+            if(data[z] == CONST_DELIM):
                 count+=1
-            if(count == 3):
+            if(count == index):
                 hashIndex = z
                 break
         for i in range(z+1,CONST_HASHCODE_LENGTH+z+1):
