@@ -10,7 +10,7 @@ Note - [0] is the delimeter used between items in packets. Currently, '_'(unders
 
 1 - FoodItem Returned : This packet contains the requested FoodItem
 #####Format
-	1[0][String FoodItem name][0][String lifetimeInDays]
+	1[0][String FoodItem name][0][String lifetimeInDays][0][String daysFromNow(optional)]
 
 2 - FoodItem not in Database : Sent when the database does not contain the requested hashcode
 #####Format
