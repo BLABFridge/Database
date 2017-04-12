@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 db = create_engine('mysql://3010user:sysc3010@localhost/BLAB_db');
 base = declarative_base(bind=db)
 
+# Declarative class for mapping of SQL table to python Object class
 class Item_Lookup(base):
 	__tablename__ = 'food_item_lookup'
 
@@ -16,6 +17,8 @@ class Item_Lookup(base):
 	def __repr(self):
 		return "<item_lookup(tag_hashcode='%s', item_name='%s', expiry='%i')>" % (self.tag_hashcode, self.item_name, self.expiry)
 
+# Database Handler Class Construction
+# Instantiates a Session and handles SQL queries
 class db_hand:
 
 	def __init__(self):
